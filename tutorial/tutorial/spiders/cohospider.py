@@ -58,7 +58,7 @@ class CohoSpider(scrapy.Spider):
         base_url = 'https://api.company-information.service.gov.uk'
         url = self.paginate(base_url, response)
         if url is not None:
-            yield response.follow(url, callback=self.parse_officer, headers={'Authorization': '_GET YOUR OWN_'})
+            yield response.follow(url, callback=self.parse_officer, headers={'Authorization': auth})
 
         # yield response.json()
         filename = response.json()['links']['self'].split("/")[2]
