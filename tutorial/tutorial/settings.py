@@ -14,7 +14,7 @@ NEWSPIDER_MODULE = 'tutorial.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'tutorial (+http://www.yourdomain.com)'
+USER_AGENT = 'pometry (+http://www.pometry.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = True
@@ -41,6 +41,9 @@ CONCURRENT_REQUESTS_PER_IP = 1
 #   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
 #   'Accept-Language': 'en',
 #}
+DEFAULT_REQUEST_HEADERS = {
+    'Referer': 'http://www.pometry.com'
+}
 
 # Enable or disable spider middlewares
 # See https://docs.scrapy.org/en/latest/topics/spider-middleware.html
