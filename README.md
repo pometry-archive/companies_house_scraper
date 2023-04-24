@@ -15,7 +15,7 @@ You can get an api from the companies house website.
 You can also contact companies house directly, their support and developer teams are extremely friendly and 
 can get you direct access to bulk read only data. 
 
-> pip install scrapy
+> pip install scrapy click
 > cd tutorial
 > scrapy crawl persons-with-significant-control
 
