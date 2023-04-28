@@ -1,28 +1,92 @@
-# coho-spider
+# Coho Spider
 
-This is a scraper written by @haaroon and @rachchan that can be used to scrape data from companies house. 
+This is a scraper written by @haaroon and @rachchan that can be used to scrape data from Companies House. 
 
-It uses python and scrapy.
+## Requirements
+- Python >= 3.7
+- Scrapy >= 2.8.0
+- Companies House Developer Hub Account/REST API Key 
+- List of Company Numbers from Companies House to scrape (optional)
 
-You need to set the API KEY to the API_KEY_COMPANIES_HOUSE variable inside tutorial/spiders/cohoPscSpider.py
+We have included a list of companies if you do not have any, but it may not be up to date. 
 
-You also need to set the companies numbers without headers file. I have added a list of companies. 
+You can get an API key from the Companies House website. 
 
-We have a list of companies but it may not be upto date. 
+You can also contact [Companies House](https://forum.aws.chdev.org/) directly, their support and developer teams are extremely friendly and can get you direct access to bulk read only data. 
 
-You can get an api from the companies house website. 
+## Installation Guide
 
-You can also contact companies house directly, their support and developer teams are extremely friendly and 
-can get you direct access to bulk read only data. 
+First, open up a new terminal and install our scraper.
+```
+pip install -i https://test.pypi.org/simple/ cohospider
+```
 
-> pip install scrapy click
-> cd tutorial
-> scrapy crawl persons-with-significant-control
+Next, open up your python terminal of choice, pick a spider to use and enter the following commands.
 
-This will produce a `data` folder that contains a folders of companies, inside with a person of significant control
+### Scraping Persons With Significant Control 
+If you would like to obtain JSON data on a company's Persons With Significant Control, you can follow the following commands:
+
+```
+from spiders import CohoPscSpiderRun
+```
+*With default Company data*
+```
+psc_runner = CohoPscSpiderRun(key="INSERT_API_KEY_HERE")
+```
+*OR with your own company data*
+```
+psc_runner = CohoPscSpiderRun(key="INSERT_API_KEY_HERE", company_numbers=[COMPANY_NUMBER1, COMPANY_NUMBER2, etc..])
+```
+```
+psc_runner.start()
+```
+
+The output will follow this JSON format:
+https://developer-specs.company-information.service.gov.uk/companies-house-public-data-api/resources/list?v=latest
+
+### Scraping Directors
+
+If you would like to obtain JSON data on a company's Directors, you can follow the following commands:
+
+```
+from spiders import CohoOfficerSpiderRun
+```
+*With default Company data*
+```
+officer_runner = CohoOfficerSpiderRun(key="INSERT_API_KEY_HERE")
+```
+*OR with your own company data*
+```
+officer_runner = CohoOfficerSpiderRun(key="INSERT_API_KEY_HERE", company_numbers=[COMPANY_NUMBER1, COMPANY_NUMBER2, etc..])
+```
+```
+officer_runner.start()
+```
+
+The output will follow this JSON format:
+https://developer-specs.company-information.service.gov.uk/companies-house-public-data-api/resources/officerlist?v=latest
+
+### Scraping for our example notebook
+
+If you are following our example notebook/blog on Companies House in Raphtory, you will need to use our barbara-spider:
+
+```
+from spiders import BarbaraSpiderRun
+```
+```
+barbara_runner = CohoOfficerSpiderRun(key="INSERT_API_KEY_HERE")
+```
+```
+barbara_runner.start()
+```
+The output will follow this JSON format:
+https://developer-specs.company-information.service.gov.uk/companies-house-public-data-api/resources/officerlist?v=latest
 
 
-# license 
+
+All these runners produce a `data` folder in your root directory, where you can find all your JSON data, ready to be used in Raphtory for analysis.
+
+# License 
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,

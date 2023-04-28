@@ -1,18 +1,30 @@
-from email.mime import base
-from urllib import response
-from click import pass_obj
 import scrapy
 import json
 import csv
 import os
-from w3lib.http import basic_auth_header
+from scrapy.crawler import CrawlerProcess
+from scrapy.utils.project import get_project_settings
+from importlib.resources import files
 
-API_KEY_COMPANIES_HOUSE = "SET API KEY HERE"
-auth = basic_auth_header(API_KEY_COMPANIES_HOUSE, '')
+class CohoPscSpiderRun():
+    def __init__(self, key, company_numbers=None):
+        self.key = key
+        self.company_numbers = company_numbers
+
+    def start(self):
+        process = CrawlerProcess(get_project_settings())
+        process.crawl(CohoPscSpider, self.key, self.company_numbers)
+        process.start() # the script will block here until the crawling is finished
 
 class CohoPscSpider(scrapy.Spider):
-    name = "persons-with-significant-control"
-    
+    name = "psc"
+
+    def __init__(self, key="", company_numbers=None, *args, **kwargs):
+        super(CohoPscSpider, self).__init__(*args, **kwargs)
+
+        self.key = key
+        self.company_numbers = company_numbers
+
     def start_requests(self):
         print('''
                                                                                                                       
@@ -38,13 +50,18 @@ class CohoPscSpider(scrapy.Spider):
                                                                                                                     
         ''')
         base_url ='https://api.company-information.service.gov.uk/company/'
-        # company_numbers=[13693711]
-        with open('companynumberswithoutheaders.csv') as csvfile:
-            data = list(csv.reader(csvfile))
-        company_numbers = [x[0] for x in data]
-        for company_number in company_numbers:
+
+        if self.company_numbers is None:
+            file_path=files('spiders').joinpath('companynumberswithoutheaders.csv')
+            with file_path.open() as csvfile:
+                data = list(csv.reader(csvfile))
+                company_numbers_list = [x[0] for x in data] 
+        else:
+            company_numbers_list = self.company_numbers
+        
+        for company_number in company_numbers_list:
             psc_url = base_url + str(company_number) + '/persons-with-significant-control' + '?items_per_page=' + '100'
-            yield scrapy.Request(psc_url, callback=self.parse, headers={'Authorization': auth})
+            yield scrapy.Request(psc_url, callback=self.parse, headers={'Authorization': self.key})
 
     def paginate(self, base_url, response):
         start_index=response.json()['start_index']
@@ -63,7 +80,7 @@ class CohoPscSpider(scrapy.Spider):
         base_url ='https://api.company-information.service.gov.uk'
         url = self.paginate(base_url, response)
         if url is not None:
-            yield response.follow(url, callback=self.parse, headers={'Authorization': auth})
+            yield response.follow(url, callback=self.parse, headers={'Authorization': self.key})
 
         company_number_path = 'data/' + response.json()['links']['self'].split("/")[2]
         start_index = str(response.json()['start_index'])

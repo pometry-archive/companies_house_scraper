@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cohospider"
+version = "0.0.6"
+requires-python = ">=3.7"
+description = "A package to scrape Companies House data"
+readme = "README.md"
+dependencies = [
+    "Scrapy >= 2.8.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/Pometry/companies_house_scraper"
+"Bug Tracker" = "https://github.com/Pometry/companies_house_scraper/issues"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
